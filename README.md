@@ -22,14 +22,14 @@ We also use [relative positional encodings](https://arxiv.org/abs/1803.02155) in
 
 How does the transformer actually find the ground state of a given system? This question of interpretability is obviously a difficult one, but we make an initial attempt at gaining some insight via saliency metrics. Part of our goal is to see how well saliency metrics meant for language models perform when applied to physical systems. The metrics below seem to demonstrate that the transformer learns the locality/non-locality inherent in the spin chain on its way to the ground state.  
 
-We use feed-forward propagation (comparing logits before and after a spin flip), input x gradient, and a version of integrated attention x gradient. [Input x gradient](https://jalammar.github.io/illustrated-transformer/) is simply $$\lVert X_j \odot \nabla_{X_j}\ell_i \lVert_2,$$ where $X_{j}$ is the embedding vector of the jth token, while $\ell_i$ are the logits at the ith position. 
+We use feed-forward perturbation (comparing logits before and after a spin flip using Jensen-Shannon divergence), input x gradient, and a version of integrated attention x gradient. [Input x gradient](https://jalammar.github.io/illustrated-transformer/) is simply $$\lVert X_j \odot \nabla_{X_j}\ell_i \lVert_2,$$ where $X_{j}$ is the embedding vector of the jth token, while $\ell_i$ are the logits at the ith position. 
 
 Our definition of attention x gradient is a combination of those in [this paper](https://arxiv.org/abs/2204.11073) and [this paper](https://arxiv.org/pdf/2004.11207.pdf). Given attention weights $A$ of the lth layer, head h, and positions i,j, it is $$\frac{1}{LH}\sum_{l = 1}^L \sum_{h = 1}^H A^{lh}_{ij}\odot \int_0^1 d\alpha~\text{ReLU}(\nabla_A \ell_i(\alpha A)),$$
 
 ## Contents 
 
 This repository contains the following modules: 
-* [relativemultiheadattention](relativemultiheadattention.py): implementation of multi-head attention layer with relative positional encodings that also allows one to compute gradients with respect to attention weights using TensorFlow's gradient tape   
+* [relativemultiheadattention](relativemultiheadattention.py): implementation of multi-head attention layer with relative positional encodings. Includes additional functionality needed for computing gradients with respect to attention weights.    
 * [TransformerRelativeWF](TransformerRelativeWF.py): decoder-only transformer class which autoregressively generates states of the spin chain, and computes gradients of the energy using variational Monte-Carlo 
 * [train_decoder](train_decoder.py): trains the decoder by attempting to minimize the energy via gradient descent. Automatically saves model parameters and trained weights, which can then be loaded in notebooks for experiments making use of analysis and saliency modules. Executing the module requires inputting hyperparameters as cmd line arguments eg `python train_decoder.py -s 100 -d 2 -h 4 -r 2 -w 2500 -e 1 -c 10` where the parameters are 
   * s = system size
@@ -40,4 +40,4 @@ This repository contains the following modules:
   * e = random seed
   * c = clipping distance for relative positional encoding 
 * [transformer_analysis](transformer_analysis.py): contains methods for computing correlation functions and Renyi entropies of a given transformer wavefunction. Executing module requires cmd line arguments for size of ensemble of trained decoders (ie the sweep across random seeds) and name of model. Load trained weights and json file of model params onto an instantiated decoder and compute using provided methods. We provide an example in the module.   
-* [saliency_metrics](saliency_metrics.py): implementation of the saliency metrics described above. Can be imported into a separate notebook for experiments. As above, load trained weights and model params, then compute saliency metrics with provided methods. 
+* [saliency_metrics](saliency_metrics.py): implementation of the saliency metrics described above, using TensorFlow's gradient tape. Can be imported into a separate notebook for experiments. As above, load trained weights and model params, then compute saliency metrics with provided methods. 
