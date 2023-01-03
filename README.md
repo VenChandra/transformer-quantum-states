@@ -39,5 +39,5 @@ This repository contains the following modules:
   * w = learning rate decay warmup steps 
   * e = random seed
   * c = clipping distance for relative positional encoding 
-* [transformer_analysis](transformer_analysis.py): contains methods for computing correlation functions and Renyi entropies of a given transformer wavefunction. Can be imported into a separate notebook for experiments. 
-* [saliency_metrics](saliency_metrics.py): implementation of the saliency metrics described above. Can also be imported into a separate notebook for experiments. 
+* [transformer_analysis](transformer_analysis.py): contains methods for computing correlation functions and Renyi entropies of a given transformer wavefunction. Can be imported into a separate notebook for experiments. Load trained weights and json file of model params onto an instantiated decoder and compute using provided methods.  
+* [saliency_metrics](saliency_metrics.py): implementation of the saliency metrics described above. Can also be imported into a separate notebook for experiments. As above, load trained weights and model params, then compute saliency metrics with provided methods. 
