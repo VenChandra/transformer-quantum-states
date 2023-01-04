@@ -12,7 +12,7 @@ important and difficult problem. Conventional techniques such as exact diagonali
 
 Transformers on the other hand are extremely effective in learning long-range dependencies, making them ideally suited for this task. In our upcoming paper, we autoregressively train a decoder-only transformer using [variational Monte-Carlo](https://journals.aps.org/prresearch/abstract/10.1103/PhysRevResearch.2.023358) to find the ground state of an area law system (the critical point transverse field Ising model) as well as a volume law system (the modified Haldane-Shastry model). 
 
-We find that transformers achieve state of the art results, and they does so without any constraints/symmetries enforced by hand to improve training, unlike [this RBM benchmark](https://journals.aps.org/prx/abstract/10.1103/PhysRevX.7.021021). We compute correlation functions and Renyi entropies in the transformer ground state as accuracy metrics.  
+We find that transformers achieve state of the art results, and they do so without any constraints/symmetries enforced by hand to improve training, unlike [this RBM benchmark](https://journals.aps.org/prx/abstract/10.1103/PhysRevX.7.021021). We compute correlation functions and Renyi entropies in the transformer ground state as accuracy metrics.  
 
 Prior applications of neural networks to spin chains typically consider the vocabulary $0, 1$ (spin down/up). But transformers can handle arbitrary dictionary sizes so we also consider training with arbitrary fixed-size bit strings which combine to give the full sequence of spins. In the paper we compare results across different dictionary sizes.   
 
@@ -26,6 +26,7 @@ We use feed-forward perturbation (comparing logits before and after a spin flip 
 
 Our definition of attention x gradient is a combination of those in [this paper](https://arxiv.org/abs/2204.11073) and [this paper](https://arxiv.org/pdf/2004.11207.pdf). Given attention weights $A$ of the lth layer, head h, and positions i,j, it is $$\frac{1}{LH}\sum_{l = 1}^L \sum_{h = 1}^H A^{lh}_{ij}\odot \int_0^1 d\alpha~\text{ReLU}(\nabla_A \ell_i(\alpha A)),$$
 
+The feed-forward perturbation saliency is the most straightforward to interpret; we find that both gradient saliencies defined above agree closely with it.   
 ## Contents 
 
 This repository contains the following modules: 
@@ -39,5 +40,5 @@ This repository contains the following modules:
   * w = learning rate decay warmup steps 
   * e = random seed
   * c = clipping distance for relative positional encoding 
-* [transformer_analysis](transformer_analysis.py): contains methods for computing correlation functions and Renyi entropies of a given transformer wavefunction. Executing module requires cmd line arguments for size of ensemble of trained decoders (ie the sweep across random seeds) and name of model. Load trained weights and json file of model params onto an instantiated decoder and compute using provided methods. We provide an example in the module.   
+* [transformer_analysis](transformer_analysis.py): contains methods for computing correlation functions and Renyi entropies of a given transformer wavefunction. Executing module requires cmd line argument for name of model. One can optionally also specify size of ensemble of trained decoders (ie the sweep across random seeds), in which case remove seed from string literal when specifying model name. Load trained weights and json file of model params onto an instantiated decoder and compute using provided methods. We provide an example in the module.   
 * [saliency_metrics](saliency_metrics.py): implementation of the saliency metrics described above, using TensorFlow's gradient tape. Can be imported into a separate notebook for experiments. As above, load trained weights and model params, then compute saliency metrics with provided methods. 
