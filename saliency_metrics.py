@@ -68,7 +68,7 @@ def gradient_saliency(decoder: TransformerDecoder, samples: tf.Tensor) -> tf.Ten
             for idx in range(seq_length):
                 all_max_logits.append(max_logits[batch_idx, idx])
 
-    for batch_idx in range(1):
+    for batch_idx in range(batch_size):
         for idx in range(seq_length - 1):
             grads = tape.gradient(
                 all_max_logits[batch_idx * seq_length + idx + 1],
